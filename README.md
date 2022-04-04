@@ -1,4 +1,4 @@
-# SQL_Project
+# Data Exploration
 
 A SQL Project demonstrating the use of various queries to extract data from a huge dataset. 
 
