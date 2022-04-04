@@ -49,17 +49,23 @@ order by 1,2;
 
 -- Total Population vs Vaccinations
 -- Shows Percentage of Population that has recieved at least one Covid Vaccine
-Select  continent,  location,  date,  population,  new_vaccinations
-, SUM(CONVERT(int, new_vaccinations)) OVER (Partition by location Order by location,  Date) as RollingPeopleVaccinated
+Select  death.continent, death.location, death.date, death.population, vacc.new_vaccinations
+, SUM(CONVERT(int,vacc.new_vaccinations)) OVER (Partition by death.Location Order by death.location, death.Date) as RollingPeopleVaccinated
 --, (RollingPeopleVaccinated/population)*100
-FROM githubproject.`ccovid-data`
+From githubproject.`ccovid-data` AS death
+Join githubproject.`vaccination` AS vacc
+	On death.location = vacc.location
+	and death.date = vacc.date
 where  continent is not null 
 order by 2,3;
-
+ 
 -- Creating View to store data for later visualizations
 Create View PercentPopulationVaccinated as
-Select continent,  location,  date,  population,  new_vaccinations
-, SUM(CONVERT(int, new_vaccinations)) OVER (Partition by  location Order by location,  Date) as RollingPeopleVaccinated
+Select death.continent, death.location, death.date, death.population, vacc.new_vaccinations
+, SUM(CONVERT(int,vacc.new_vaccinations)) OVER (Partition by death.Location Order by death.location, death.Date) as RollingPeopleVaccinated
 --, (RollingPeopleVaccinated/population)*100
-FROM githubproject.`ccovid-data`
-where  continent is not null ;
+From githubproject.`ccovid-data` death
+Join githubproject.`vaccination` vacc
+On death.location = vacc.location
+	and death.date = vacc.date
+where death.continent is not null 
